@@ -43,8 +43,7 @@ const CustomInput: React.FC<InputProps> = ({
         onChange={handleChange}
         placeholder={placeholder}
         className={`block w-full rounded-xl border border-gray-300 py-2 pr-4 pl-10
-                    text-gray-900 placeholder-gray-400 shadow-sm transition
-                    focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400`}
+                    text-gray-900 placeholder-gray-400 shadow-sm `}
       />
     </div>
   );

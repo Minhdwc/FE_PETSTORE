@@ -7,10 +7,14 @@ type IconProps = {
   className: string;
 };
 
-const Icon = ({ icon, navigate, onClick, className }: IconProps) => {
+const CustomIcon = ({ icon, navigate, onClick, className }: IconProps) => {
   const navigateFc = useNavigate();
   const handleClick = () => {
-    onClick();
+    if (onClick) {
+      onClick();
+    } else {
+      navigateFc(navigate);
+    }
   };
   return (
     <div
@@ -24,4 +28,4 @@ const Icon = ({ icon, navigate, onClick, className }: IconProps) => {
   );
 };
 
-export default Icon;
+export default CustomIcon;

@@ -7,7 +7,7 @@ type LogoProps = {
   height?: number | string;
 };
 
-const Logo = ({ src, alt = "Logo", width, height }: LogoProps) => {
+const CustomLogo = ({ src, alt = "Logo", width, height }: LogoProps) => {
   const navigate = useNavigate();
 
   return (
@@ -16,16 +16,13 @@ const Logo = ({ src, alt = "Logo", width, height }: LogoProps) => {
       alt={alt}
       width={width}
       height={height}
-      className="cursor-pointer select-none"
+      className="cursor-pointer select-none h-10 mx-auto object-cover rounded-full w-10"
       onClick={() => navigate("/")}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") navigate("/");
-      }}
       draggable={false}
     />
   );
 };
 
-export default Logo;
+export default CustomLogo;

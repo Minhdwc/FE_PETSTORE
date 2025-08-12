@@ -8,17 +8,19 @@ type LayoutProps = {
 };
 const DefaultLayout = ({ children }: LayoutProps) => {
   return (
-    <>
+    <Layout
+      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+    >
       <Layout.Header>
         <HeaderComponent />
       </Layout.Header>
-      <Layout.Content>
+      <Layout.Content style={{ flex: 1 }}>
         <Container>{children}</Container>
       </Layout.Content>
-      <Layout.Footer style={{ padding: 0 }}>
+      <Layout.Footer style={{ padding: 0, background: "#001529" }}>
         <FooterComponents />
       </Layout.Footer>
-    </>
+    </Layout>
   );
 };
 

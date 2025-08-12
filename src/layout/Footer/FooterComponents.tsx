@@ -5,8 +5,8 @@ import Logo from "@/assets/logo.png";
 
 export default function FooterComponents() {
   return (
-    <footer className="text-white" style={{ background: "#001529" }}>
-      <div className="max-w-7xl mx-auto py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+    <div className="text-white px-12.5" style={{ background: "#001529" }}>
+      <div className=" mx-auto py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
         <div>
           <div className="flex items-center space-x-3">
             <img
@@ -52,14 +52,17 @@ export default function FooterComponents() {
           <p className="text-lg font-semibold">Khám phá</p>
           <ul className="mt-4 space-y-3 text-sm">
             <li>
-              <Link to="/" className="hover:text-amber-600 transition-colors">
+              <Link
+                to="/"
+                className="!text-white hover:!text-amber-600 transition-colors"
+              >
                 Trang chủ
               </Link>
             </li>
             <li>
               <Link
                 to="/pets"
-                className="hover:text-amber-600 transition-colors"
+                className="!text-white hover:!text-amber-600 transition-colors"
               >
                 Thú cưng
               </Link>
@@ -67,7 +70,7 @@ export default function FooterComponents() {
             <li>
               <Link
                 to="/products"
-                className="hover:text-amber-600 transition-colors"
+                className="!text-white hover:!text-amber-600 transition-colors"
               >
                 Sản phẩm
               </Link>
@@ -75,7 +78,7 @@ export default function FooterComponents() {
             <li>
               <Link
                 to="/appointments"
-                className="hover:text-amber-600 transition-colors"
+                className="!text-white hover:!text-amber-600 transition-colors"
               >
                 Lịch hẹn
               </Link>
@@ -89,7 +92,7 @@ export default function FooterComponents() {
             <li>
               <Link
                 to="/about"
-                className="text-white hover:text-amber-600 transition-colors"
+                className="!text-white hover:!text-amber-600 transition-colors"
               >
                 Về chúng tôi
               </Link>
@@ -97,7 +100,7 @@ export default function FooterComponents() {
             <li>
               <Link
                 to="/policy/warranty"
-                className="text-white hover:text-amber-600 transition-colors"
+                className="!text-white hover:!text-amber-600 transition-colors"
               >
                 Chính sách bảo hành
               </Link>
@@ -105,7 +108,7 @@ export default function FooterComponents() {
             <li>
               <Link
                 to="/policy/return"
-                className="text-white hover:text-amber-600 transition-colors"
+                className="!text-white hover:!text-amber-600 transition-colors"
               >
                 Chính sách đổi trả
               </Link>
@@ -113,7 +116,7 @@ export default function FooterComponents() {
             <li>
               <Link
                 to="/policy/privacy"
-                className="text-white hover:text-amber-600 transition-colors"
+                className="!text-white hover:!text-amber-600 transition-colors"
               >
                 Chính sách bảo mật
               </Link>
@@ -121,7 +124,7 @@ export default function FooterComponents() {
             <li>
               <Link
                 to="/faq"
-                className="text-white hover:text-amber-600 transition-colors"
+                className="!text-white hover:!text-amber-600 transition-colors"
               >
                 Câu hỏi thường gặp
               </Link>
@@ -140,7 +143,7 @@ export default function FooterComponents() {
               <FiPhone className="mt-0.5 text-amber-400" size={18} />
               <a
                 href="tel:0123456789"
-                className="text-white hover:text-amber-600 transition-colors"
+                className="!text-white hover:!text-amber-600 transition-colors"
               >
                 0123 456 789
               </a>
@@ -149,7 +152,7 @@ export default function FooterComponents() {
               <FiMail className="mt-0.5 text-amber-400" size={18} />
               <a
                 href="mailto:contact@petstore.vn"
-                className="text-white hover:text-amber-600 transition-colors"
+                className="!text-white hover:!text-amber-600 transition-colors"
               >
                 contact@petstore.vn
               </a>
@@ -185,6 +188,6 @@ export default function FooterComponents() {
           </h2>
         </div>
       </div>
-    </footer>
+    </div>
   );
 }

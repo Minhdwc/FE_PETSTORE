@@ -1,31 +1,64 @@
-import React, { useState } from "react";
-import { Badge, Dropdown, Avatar } from "antd";
+import React from "react";
+import { Dropdown, Avatar } from "antd";
 import {
   UserOutlined,
   ShoppingCartOutlined,
   HeartOutlined,
-  BellOutlined,
   DownOutlined,
+  BellOutlined,
 } from "@ant-design/icons";
 
 import Logo from "@/assets/logo.png";
 import CustomLogo from "@/components/Logo/Logo";
 import HeaderMenu from "./MenuHeader/Menu";
+import CustomDrawer from "./DrawerHeader/Drawer";
+import toast from "react-hot-toast";
+import Cart from "./DrawerHeader/CartHeader/cart";
+import Wishlist from "./DrawerHeader/WishlistHeader/wishlist";
 
 const HeaderComponent: React.FC = () => {
-  const [cartCount, setCartCount] = useState(5);
-  const [notificationsCount, setNotificationsCount] = useState(3);
+  const token = localStorage.getItem("accessToken");
 
-  const userMenuItems = [
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    toast.success("Đăng xuất thành công!");
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 1000);
+  };
+
+  const userMenuItemsNotLogged = [
+    {
+      key: "orders",
+      label: <a href="/">Đơn hàng của tôi</a>,
+      icon: <ShoppingCartOutlined />,
+    },
+    {
+      key: "favorites",
+      label: <a href="">Yêu thích</a>,
+      icon: <HeartOutlined />,
+    },
+    {
+      key: "login",
+      label: <a href="/auth/login">Đăng nhập</a>,
+      icon: <UserOutlined />,
+    },
+    {
+      key: "register",
+      label: <a href="/auth/register">Đăng ký</a>,
+      icon: <UserOutlined />,
+    },
+  ];
+  const menuUserItemsLogged = [
     {
       key: "profile",
-      label: "Hồ sơ cá nhân",
+      label: <a href="/user/detail">Hồ sơ cá nhân</a>,
       icon: <UserOutlined />,
     },
     {
       key: "orders",
-      label: "Đơn hàng của tôi",
-      icon: <HeartOutlined />,
+      label: <a href="/">Đơn hàng của tôi</a>,
+      icon: <ShoppingCartOutlined />,
     },
     {
       key: "favorites",
@@ -37,7 +70,7 @@ const HeaderComponent: React.FC = () => {
     },
     {
       key: "logout",
-      label: "Đăng xuất",
+      label: <a onClick={handleLogout}>Đăng xuất</a>,
       icon: <UserOutlined />,
     },
   ];
@@ -57,27 +90,39 @@ const HeaderComponent: React.FC = () => {
       <HeaderMenu />
 
       <div className="flex items-center space-x-3 text-white">
-        <button className="flex items-center space-x-2 p-2 rounded-full hover:bg-amber-100 hover:text-black transition-all duration-200 group">
-          <Badge count={notificationsCount} size="small" offset={[-2, 2]}>
-            <BellOutlined style={{ fontSize: 20, color: "#fff" }} />
-          </Badge>
-        </button>
-
-        <button className="flex items-center space-x-2 p-2 rounded-full hover:bg-amber-100 hover:text-black transition-all duration-200 group">
-          <HeartOutlined
-            className="text-white group-hover:text-amber-600 transition-colors"
-            style={{ fontSize: 20 }}
-          />
-        </button>
-
-        <button className="flex items-center space-x-2 p-2 rounded-full hover:bg-amber-100 hover:text-black transition-all duration-200 group">
-          <Badge count={cartCount} size="small" offset={[-2, 2]}>
-            <ShoppingCartOutlined style={{ fontSize: 20, color: "#fff" }} />
-          </Badge>
-        </button>
-
+        <CustomDrawer
+          context="0"
+          icon={
+            <BellOutlined
+              className="text-white group-hover:text-amber-600 transition-colors"
+              style={{ fontSize: 20 }}
+            />
+          }
+          titleDrawer="Thông báo"
+        />
+        <CustomDrawer
+          context={<Wishlist />}
+          icon={
+            <HeartOutlined
+              className="text-white group-hover:text-amber-600 transition-colors"
+              style={{ fontSize: 20 }}
+            />
+          }
+          titleDrawer="Yêu thích"
+        />
+        <CustomDrawer
+          context={<Cart />}
+          icon={
+            <ShoppingCartOutlined
+              className="text-white group-hover:text-amber-600 transition-colors"
+              style={{ fontSize: 20 }}
+            />
+          }
+          titleDrawer="Giỏ hàng"
+          badgeCount={10}
+        />
         <Dropdown
-          menu={{ items: userMenuItems }}
+          menu={{ items: token ? menuUserItemsLogged : userMenuItemsNotLogged }}
           placement="bottomRight"
           trigger={["hover"]}
         >

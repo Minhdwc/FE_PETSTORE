@@ -2,13 +2,21 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { userApi } from "./services/user.service";
+import { petApi } from "./services/pet.service";
+import { wishlistApi } from "./services/wishlist.service";
+import { cartApi } from "./services/cart.service";
+import { notificationApi } from "./services/notification.service";
 
 export const store = configureStore({
     reducer: {
-        [userApi.reducerPath]: userApi.reducer
+        [userApi.reducerPath]: userApi.reducer,
+        [petApi.reducerPath]: petApi.reducer,
+        [wishlistApi.reducerPath]: wishlistApi.reducer,
+        [cartApi.reducerPath]: cartApi.reducer,
+        [notificationApi.reducerPath]: notificationApi.reducer,
     },
     middleware: (getDefaultMiddleware)=>
-        getDefaultMiddleware().concat(userApi.middleware)
+        getDefaultMiddleware().concat(userApi.middleware, petApi.middleware, wishlistApi.middleware, cartApi.middleware, notificationApi.middleware),
 })
 
 setupListeners(store.dispatch);

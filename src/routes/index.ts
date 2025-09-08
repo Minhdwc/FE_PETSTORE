@@ -6,7 +6,7 @@ const pageNotFound = React.lazy(
 );
 
 //Page authentication
-const pageLogin = React.lazy(() => import("@/pages/auth/login"));
+const pageLogin = React.lazy(() => import("@/pages/auth/login"))
 const pageRegister = React.lazy(() => import("@/pages/auth/register"));
 
 //Page of user

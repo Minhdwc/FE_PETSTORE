@@ -126,3 +126,15 @@ export interface ICart {
   totalPrice?: number;
   createdAt?: Date;
 }
+
+export interface IWishlistItem {
+  itemId: string;
+  itemType: 'Pet' | 'Product';
+}
+
+export interface IWishlist {
+  _id: string;
+  userId: string;
+  items: IWishlistItem[];
+  createdAt?: Date;
+}

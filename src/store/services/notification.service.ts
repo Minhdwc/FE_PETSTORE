@@ -2,21 +2,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import config from "@/config";
 import { INotification } from "@/types";
 
+// BE trả về mảng trực tiếp, không có data wrapper
 interface NotificationResponse {
-  status: number;
-  message: string;
-  data: NotificationPage;
-}
-interface NotificationPage {
   data: INotification[];
   total: number;
   pageCurrent: number;
   totalPage: number;
-}
-export interface ResponseNotification {
-  status: number;
-  message: string;
-  data: INotification;
 }
 
 export const notificationApi = createApi({
@@ -28,14 +19,14 @@ export const notificationApi = createApi({
   endpoints: (build) => ({
     getNotificationsByUser: build.query<
       NotificationResponse,
-      { page?: number; limit?: number; userId: string }
+      { page?: number; limit?: number }
     >({
-      query: ({ page, limit, userId }) => {
+      query: ({ page, limit}) => {
         const params = new URLSearchParams();
         if (limit) params.append("limit", String(limit));
         if (page) params.append("page", String(page));
         return {
-          url: `notification/all?userId=${userId}&${params.toString()}`,
+          url: `notification/all?${params.toString()}`,
           method: "GET",
           credentials: "include",
           headers: {
@@ -45,9 +36,9 @@ export const notificationApi = createApi({
         };
       },
       providesTags: (results) => {
-        if (results) {
+        if (results && results.data) {
           return [
-            ...results.data.data.map(({ _id }) => ({
+            ...results.data.map(({ _id }) => ({
               type: "Notifications" as const,
               id: _id,
             })),

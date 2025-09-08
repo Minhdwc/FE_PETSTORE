@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { Drawer } from "antd";
 import { Badge } from "@mui/material";
 
+type DrawerRenderContext = {
+  isOpen: boolean;
+};
+
 type DrawerProps = {
-  context: React.ReactNode;
+  context: React.ReactNode | ((ctx: DrawerRenderContext) => React.ReactNode);
   icon: React.ReactNode;
   titleDrawer: string;
   badgeCount?: number;
@@ -37,8 +41,17 @@ const CustomDrawer: React.FC<DrawerProps> = ({
           </div>
         </Badge>
       </button>
-      <Drawer title={titleDrawer} open={open} onClose={onClose}>
-        {context}
+      <Drawer
+        title={titleDrawer}
+        open={open}
+        onClose={onClose}
+        style={{ background: "#f8f8f8" }}
+      >
+        {typeof context === "function"
+          ? (context as (ctx: DrawerRenderContext) => React.ReactNode)({
+              isOpen: open,
+            })
+          : context}
       </Drawer>
     </>
   );

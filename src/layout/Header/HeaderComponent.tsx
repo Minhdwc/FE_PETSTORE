@@ -15,6 +15,7 @@ import CustomDrawer from "./DrawerHeader/Drawer";
 import toast from "react-hot-toast";
 import Cart from "./DrawerHeader/CartHeader/cart";
 import Wishlist from "./DrawerHeader/WishlistHeader/wishlist";
+import Notification from "./DrawerHeader/NotificationHeader/Notification";
 
 const HeaderComponent: React.FC = () => {
   const token = localStorage.getItem("accessToken");
@@ -91,7 +92,7 @@ const HeaderComponent: React.FC = () => {
 
       <div className="flex items-center space-x-3 text-white">
         <CustomDrawer
-          context="0"
+          context={({ isOpen }) => <Notification isOpen={isOpen} />}
           icon={
             <BellOutlined
               className="text-white group-hover:text-amber-600 transition-colors"

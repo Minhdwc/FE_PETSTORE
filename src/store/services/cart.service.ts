@@ -2,17 +2,11 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import config from "@/config";
 import { ICart } from "@/types";
 
-interface CartResponse {
-  status: number;
-  message: string;
-  data: CartPage;
-}
-
 interface CartPage {
   data: ICart[];
   total: number;
-  pageCurrent: number;
-  totalPage: number;
+  currentPage: number | string;
+  totalPages: number;
 }
 
 export interface ResponseCart {
@@ -32,20 +26,29 @@ export interface AddToCartRequest {
   totalPrice: number;
 }
 
+export interface UpdateCartRequest{
+  items: Array<{
+    itemId: string;
+    itemType: "Pet" | "Product";
+    quantity: number;
+    price: number;
+  }>;
+}
+
 export const cartApi = createApi({
   reducerPath: "cartApi",
   baseQuery: fetchBaseQuery({ baseUrl: `${config.HOST}` }),
   tagTypes: ["Carts"],
-  keepUnusedDataFor: 60,
-  refetchOnMountOrArgChange: 30,
+  keepUnusedDataFor: 30,
+  refetchOnMountOrArgChange: true,
   endpoints: (build) => ({
-    getCartByUser: build.query<CartResponse, { page?: number; limit?: number }>({
+    getCartByUser: build.query<CartPage, { page?: number; limit?: number }>({
       query: ({ page, limit }) => {
         const params = new URLSearchParams();
         if (limit) params.append('limit', String(limit));
         if (page) params.append('page', String(page));
         return {
-          url: `cart/all?${params.toString()}`,
+          url: `cart/user?${params.toString()}`,
           method: 'GET',
           credentials: "include",
           headers: {
@@ -55,9 +58,9 @@ export const cartApi = createApi({
         };
       },
       providesTags: results => {
-        if (results) {
+        if (results?.data && results.data.length > 0) {
           return [
-            ...results.data.data.map(({ _id }) => ({ type: 'Carts' as const, id: _id })),
+            ...results.data.map(({ _id }) => ({ type: 'Carts' as const, id: _id })),
             { type: 'Carts' as const, id: 'LIST' }
           ];
         }
@@ -76,9 +79,22 @@ export const cartApi = createApi({
         },
         body: cartData
       }),
-      invalidatesTags: [{ type: 'Carts', id: 'LIST' }]
+      invalidatesTags: [{ type: 'Carts' }]
+    }),
+    updateToCart: build.mutation<ResponseCart, UpdateCartRequest>({
+      query: (cartData) => ({
+        url: 'cart/update',
+        method: 'PUT',
+        credentials: "include",
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        },
+        body: cartData
+      }),
+      invalidatesTags: [{ type: 'Carts' }]
     })
   })
 });
 
-export const { useGetCartByUserQuery, useAddToCartMutation } = cartApi;
+export const { useGetCartByUserQuery, useAddToCartMutation, useUpdateToCartMutation } = cartApi;

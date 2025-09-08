@@ -19,7 +19,7 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       if (!email || !password) {
-        toast.error("Please fill in all fields");
+        toast.error("Vui lòng điền đầy đủ thông tin");
         return;
       }
 
@@ -33,19 +33,18 @@ export default function Login() {
       if (response.data.status === "Success") {
         const { accessToken, refreshToken } = response.data.data;
 
-        // Store tokens
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
 
-        toast.success("Login successful");
+        toast.success("Đăng nhập thành công");
         setTimeout(() => {
           navigate("/");
         }, 500);
       } else {
-        toast.error(response.data.message || "Login failed");
+        toast.error(response.data.message || "Đăng nhập thất bại");
       }
     } catch (error: any) {
-      const message = error?.response?.data?.message || "Login failed";
+      const message = error?.response?.data?.message || "Đăng nhập thất bại";
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -67,7 +66,7 @@ export default function Login() {
             color: "#1e293b",
           }}
         >
-          Pet Store login
+          ĐĂNG NHẬP
         </Typography>
         <h3 className="text-center text-gray-500 mb-8">LOGIN</h3>
 
@@ -97,7 +96,7 @@ export default function Login() {
               to="/auth/forgot-password"
               className="text-sm text-blue-600 hover:underline"
             >
-              Forgot password?
+              Quên mật khẩu?
             </Link>
           </div>
 
@@ -111,9 +110,9 @@ export default function Login() {
         </div>
 
         <div className="mt-6 text-center text-sm text-gray-500">
-          Don't have an account?{" "}
+          Bạn chưa có tài khoản?{" "}
           <Link to="/auth/register" className="text-blue-600 hover:underline">
-            Register
+            Đăng ký
           </Link>
         </div>
       </Container>

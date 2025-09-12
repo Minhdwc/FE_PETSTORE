@@ -1,23 +1,21 @@
-import { IPet } from "@/types";
-import PetCard from "./PetCard";
+import { IProduction } from "@/types";
+import ProductionCard from "./ProductionCard";
 
-interface PetsGridProps {
-  pets: IPet[];
+interface ProductsGridProps {
+  products: IProduction[];
   isLoading: boolean;
   isError: boolean;
-  isPetInCart: (petId: string) => boolean;
   isAddingToCart: boolean;
-  onAddToCart: (pet: IPet) => void;
+  onAddToCart: (product: IProduction) => void;
 }
 
-export default function PetsGrid({
-  pets,
+export default function ProductsGrid({
+  products,
   isLoading,
   isError,
-  isPetInCart,
   isAddingToCart,
   onAddToCart,
-}: PetsGridProps) {
+}: ProductsGridProps) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
@@ -40,18 +38,17 @@ export default function PetsGrid({
   if (isError) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
-        Failed to load pets. Please try again later.
+        Failed to load products. Please try again later.
       </div>
     );
   }
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-      {pets.map((pet) => (
-        <PetCard
-          key={pet._id}
-          pet={pet}
-          isPetInCart={isPetInCart}
+      {products.map((product) => (
+        <ProductionCard
+          key={product._id}
+          product={product}
           isAddingToCart={isAddingToCart}
           onAddToCart={onAddToCart}
         />

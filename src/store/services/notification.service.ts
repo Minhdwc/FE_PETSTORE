@@ -1,8 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import config from "@/config";
 import { INotification } from "@/types";
-
-// BE trả về mảng trực tiếp, không có data wrapper
 interface NotificationResponse {
   data: INotification[];
   total: number;

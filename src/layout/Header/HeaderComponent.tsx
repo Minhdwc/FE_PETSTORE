@@ -6,6 +6,7 @@ import {
   HeartOutlined,
   DownOutlined,
   BellOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 
 import Logo from "@/assets/logo.png";
@@ -16,9 +17,27 @@ import toast from "react-hot-toast";
 import Cart from "./DrawerHeader/CartHeader/cart";
 import Wishlist from "./DrawerHeader/WishlistHeader/wishlist";
 import Notification from "./DrawerHeader/NotificationHeader/Notification";
+import { useLazySearchPetsQuery } from "@/store/services/pet.service";
+import { useLazySearchProductionsQuery } from "@/store/services/production.service";
 
 const HeaderComponent: React.FC = () => {
   const token = localStorage.getItem("accessToken");
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+  const [keyword, setKeyword] = React.useState("");
+  const [searchPets, { data: petResults }] = useLazySearchPetsQuery();
+  const [searchProductions, { data: productResults }] =
+    useLazySearchProductionsQuery();
+
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      const q = keyword.trim();
+      if (q) {
+        searchPets({ q, limit: 5 });
+        searchProductions({ q, limit: 5 });
+      }
+    }, 350);
+    return () => clearTimeout(handler);
+  }, [keyword]);
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -101,6 +120,16 @@ const HeaderComponent: React.FC = () => {
           }
           titleDrawer="Thông báo"
         />
+        <button
+          aria-label="Search"
+          onClick={() => setIsSearchOpen(true)}
+          className="flex items-center  space-x-2 p-2 rounded-full hover:bg-amber-100 hover:text-black cursor-pointer transition-all duration-200 group"
+        >
+          <SearchOutlined
+            className="text-white group-hover:text-amber-600 transition-colors"
+            style={{ fontSize: 20 }}
+          />
+        </button>
         <CustomDrawer
           context={<Wishlist />}
           icon={
@@ -138,6 +167,106 @@ const HeaderComponent: React.FC = () => {
           </button>
         </Dropdown>
       </div>
+      {isSearchOpen && (
+        <div
+          className="fixed inset-0 z-[1000]"
+          onClick={() => {
+            setIsSearchOpen(false);
+            setKeyword("");
+          }}
+        >
+          <div className="absolute inset-0 bg-black/30" />
+          <div
+            className="relative mx-auto w-full max-w-3xl bg-white shadow-2xl rounded-b-xl overflow-hidden mt-[72px]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-2 p-3 border-b">
+              <SearchOutlined className="text-gray-500" />
+              <input
+                autoFocus
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="Tìm kiếm thú cưng, sản phẩm..."
+                className="flex-1 outline-none text-gray-900"
+              />
+              <button
+                onClick={() => {
+                  setIsSearchOpen(false);
+                  setKeyword("");
+                }}
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                Đóng
+              </button>
+            </div>
+            <div className="max-h-[60vh] overflow-y-auto">
+              {!keyword.trim() && (
+                <div className="p-4 text-gray-500 text-sm">
+                  Nhập từ khóa để tìm kiếm...
+                </div>
+              )}
+              {keyword.trim() && (
+                <div className="p-2">
+                  {(() => {
+                    const pets = petResults?.data || [];
+                    const products = productResults?.data || [];
+                    const combined = [
+                      ...pets.map((item: any) => ({ ...item, __type: "pet" })),
+                      ...products.map((item: any) => ({
+                        ...item,
+                        __type: "product",
+                      })),
+                    ];
+                    if (combined.length === 0) {
+                      return (
+                        <div className="p-4 text-sm text-gray-500">
+                          Không tìm thấy
+                        </div>
+                      );
+                    }
+                    return combined.map((item: any) => (
+                      <a
+                        key={`${item.__type}-${item._id}`}
+                        href={
+                          item.__type === "pet"
+                            ? `/pet/detail/${item._id}`
+                            : `/production/detail/${item._id}`
+                        }
+                        className="flex items-center gap-3 p-2 rounded hover:bg-gray-50"
+                      >
+                        <img
+                          src={item.image_url}
+                          alt={item.name}
+                          className="w-12 h-12 object-cover rounded"
+                        />
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-gray-900 line-clamp-1">
+                            {item.name}
+                          </div>
+                          <div className="text-xs text-gray-500 flex items-center gap-2">
+                            <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">
+                              {item.__type === "pet" ? "Thú cưng" : "Sản phẩm"}
+                            </span>
+                            {item.__type === "pet" ? (
+                              <span className="line-clamp-1">
+                                {item.breed} • {item.price?.toLocaleString()}₫
+                              </span>
+                            ) : (
+                              <span className="line-clamp-1">
+                                {item.brand} • {item.price?.toLocaleString()}₫
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </a>
+                    ));
+                  })()}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

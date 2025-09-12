@@ -1,7 +1,7 @@
-import React from "react";
 import WishlistHeaderItem from "./WishlistHeaderItem";
 import { useGetWishlistByUserQuery } from "@/store/services/wishlist.service";
-
+import { MdFavoriteBorder } from "react-icons/md";
+import { HeartOutlined } from "@ant-design/icons";
 export default function Wishlist() {
   const userId = localStorage.getItem("userId") || "";
   const {
@@ -12,11 +12,14 @@ export default function Wishlist() {
     { page: 1, limit: 10, userId },
     { skip: !userId }
   );
-
-  if (!userId) {
+  const accessToken = localStorage.getItem("accessToken");
+  if (!accessToken) {
     return (
-      <div className="text-sm text-gray-500">
-        Vui lòng đăng nhập để xem danh sách yêu thích.
+      <div className="py-6 px-2 text-center">
+        <HeartOutlined className="text-4xl text-gray-300 mb-3" />
+        <div className="text-sm text-gray-500">
+          Vui lòng đăng nhập để xem danh sách yêu thích.
+        </div>
       </div>
     );
   }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ICartItem, IPet } from "@/types";
+import { ICartItem, IPet, IProduction } from "@/types";
 import axiosInterceptor from "@/utils/authorAxios";
 import { DeleteOutlined } from "@ant-design/icons";
 
@@ -13,7 +13,9 @@ export default function CartHeaderItem({
   onRemove,
 }: CartHeaderItemProps) {
   const [petData, setPetData] = useState<IPet | null>(null);
-
+  const [productionData, setProductionData] = useState<IProduction | null>(
+    null
+  );
   useEffect(() => {
     const fetchPet = async () => {
       if (cartItem.itemType === "Pet") {
@@ -25,33 +27,38 @@ export default function CartHeaderItem({
         } catch (err) {
           console.error("Lỗi khi fetch pet:", err);
         }
+      } else {
+        try {
+          const res = await axiosInterceptor.get(
+            `/production/detail/u=${cartItem.itemId}`
+          );
+          setProductionData(res.data.data);
+        } catch (err) {
+          console.error("Lỗi khi fetch production:", err);
+        }
       }
     };
     fetchPet();
   }, [cartItem.itemId, cartItem.itemType]);
 
-  const unitPrice = petData?.price || 0;
+  const displayName = petData?.name || productionData?.name;
+  const displayImage = petData?.image_url || productionData?.image_url;
+  const unitPrice = (petData?.price ?? productionData?.price ?? 0) as number;
   const totalPrice = unitPrice * cartItem.quantity;
 
   return (
     <div className="flex items-center gap-3 p-2 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
-      {/* Hình */}
-      {petData?.image_url ? (
+      {displayImage && (
         <img
-          src={petData.image_url}
-          alt={petData.name}
+          src={displayImage}
+          alt={displayName}
           className="w-14 h-14 rounded-lg object-cover border"
         />
-      ) : (
-        <div className="w-14 h-14 bg-gray-100 rounded-lg flex items-center justify-center text-xs text-gray-400">
-          No Img
-        </div>
       )}
 
-      {/* Nội dung */}
       <div className="flex-1 min-w-0">
         <div className="text-sm font-semibold text-gray-800 truncate">
-          {petData?.name || "Sản phẩm"}
+          {displayName}
         </div>
         <div className="text-xs text-gray-500 mt-0.5">
           {unitPrice.toLocaleString("vi-VN")} ₫ × {cartItem.quantity}
@@ -61,7 +68,6 @@ export default function CartHeaderItem({
         </div>
       </div>
 
-      {/* Xóa */}
       {onRemove && (
         <button
           onClick={() => onRemove(cartItem.itemId)}

@@ -1,9 +1,14 @@
 import CartHeaderItem from "./CartHeaderItem";
 import { Button } from "antd";
-import { useGetCartByUserQuery } from "@/store/services/cart.service";
+import {
+  useGetCartByUserQuery,
+  useUpdateToCartMutation,
+} from "@/store/services/cart.service";
+import { toast } from "react-hot-toast";
 
 export default function Cart() {
   const hasAccessToken = Boolean(localStorage.getItem("accessToken"));
+  const [updateToCart, { isLoading: isUpdating }] = useUpdateToCartMutation();
   const {
     data: cartData,
     isFetching,
@@ -39,11 +44,26 @@ export default function Cart() {
     0
   );
 
+  const handleRemoveItem = async (id: string) => {
+    try {
+      const updatedItems = items.filter((i) => i.itemId !== id);
+      await updateToCart({ items: updatedItems }).unwrap();
+      toast.success("Đã xóa khỏi giỏ hàng");
+    } catch (e: any) {
+      const message = e?.data?.message || "Xóa thất bại";
+      toast.error(message);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto pr-1 space-y-2">
         {items.map((item) => (
-          <CartHeaderItem key={item.itemId} cartItem={item} />
+          <CartHeaderItem
+            key={item.itemId}
+            cartItem={item}
+            onRemove={handleRemoveItem}
+          />
         ))}
       </div>
 
@@ -59,8 +79,9 @@ export default function Cart() {
           size="large"
           block
           className="!bg-red-500 hover:!bg-red-600 rounded-lg"
+          disabled={isUpdating}
         >
-          Thanh toán
+          {isUpdating ? "Đang cập nhật..." : "Thanh toán"}
         </Button>
       </div>
     </div>

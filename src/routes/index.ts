@@ -14,7 +14,9 @@ const pageHome = React.lazy(()=>import("@/pages/user/HomePage/homePage"))
 const pagePet = React.lazy(()=>import("@/pages/user/PetPage/petPage"))
 const pageProduction = React.lazy(()=>import("@/pages/user/ProductionPage/productionPage"))
 const pageOrder = React.lazy(()=>import("@/pages/user/OrderPage/orderPage"))
-
+const detailPet = React.lazy(()=>import("@/pages/user/DetailPetPage/detailPetPage"))
+// Note: detailProduction uses the same component as pageProduction
+const detailProduction = React.lazy(()=>import("@/pages/user/ProductionPage/productionPage"))
 //Page of admin
 const dashboard = React.lazy(()=>import("@/pages/admin/dashboard"))
 
@@ -28,10 +30,11 @@ export interface Route{
 export const routes: Route[] = [
     //User
     {path: '/', element: pageHome, isShowHeader: true, isAdmin:false},
+    {path: '/pet/detail/:id', element: detailPet, isShowHeader:true, isAdmin:false},
     {path: '/pet', element: pagePet, isShowHeader: true, isAdmin:false},
+    {path: '/production/detail/:id', element: detailProduction, isShowHeader:true, isAdmin:false},
     {path: '/production', element: pageProduction, isShowHeader: true, isAdmin: false},
     {path: '/order', element: pageOrder, isShowHeader: true, isAdmin: false},
-
 
     //Admin
     {path: '/admin/dashboard', element: dashboard, isShowHeader:false, isAdmin:true},

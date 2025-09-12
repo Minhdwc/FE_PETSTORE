@@ -27,7 +27,8 @@ axiosInterceptor.interceptors.response.use(
   },
   function (error: any) {
     if (error.response?.status === 401) {
-      console.log(error.message);
+      localStorage.removeItem("accessToken")
+      localStorage.removeItem("refreshToken")
     }
     return Promise.reject(error);
   }

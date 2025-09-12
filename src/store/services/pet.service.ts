@@ -67,7 +67,6 @@ export const petApi = createApi({
           credentials: "include",
           headers: {
             "Content-type": "application/json; charset=UTF-8",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         };
       },
@@ -84,7 +83,28 @@ export const petApi = createApi({
         return [{ type: "Pets" as const, id: "LIST" }];
       },
     }),
+    getPetDetail: build.query<ResponsePet, string>({
+      query: (id) => ({
+        url: `pet/detail/u=${id}`,
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      }),
+      providesTags: (result, error, id) => [{ type: "Pets", id }],
+    }),
+    searchPets: build.query<{ total: number; data: IPet[] }, { q: string; limit?: number }>({
+      query: ({ q, limit = 10 }) => ({
+        url: `pet/search?q=${encodeURIComponent(q)}&limit=${limit}`,
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      }),
+    }),
   }),
 });
 
-export const { useGetpetsQuery } = petApi;
+export const { useGetpetsQuery, useGetPetDetailQuery, useLazySearchPetsQuery } = petApi;

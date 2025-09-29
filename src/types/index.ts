@@ -130,6 +130,8 @@ export interface ICart {
 export interface IWishlistItem {
   itemId: string;
   itemType: 'Pet' | 'Product';
+  quantity: number;
+  price: number;
 }
 
 export interface IWishlist {
@@ -137,4 +139,15 @@ export interface IWishlist {
   userId: string;
   items: IWishlistItem[];
   createdAt?: Date;
+}
+
+export interface IService {
+  _id: string;
+  name: string;
+  description?: string;
+  price: number;
+  duration?: number;
+  createdAt?: Date;
+  isActive?: boolean;
+  category?: string;
 }

@@ -7,6 +7,7 @@ import { wishlistApi } from "./services/wishlist.service";
 import { cartApi } from "./services/cart.service";
 import { notificationApi } from "./services/notification.service";
 import { productionApi } from "./services/production.service";
+import { serviceApi } from "./services/service.service";
 
 export const store = configureStore({
     reducer: {
@@ -16,9 +17,10 @@ export const store = configureStore({
         [cartApi.reducerPath]: cartApi.reducer,
         [notificationApi.reducerPath]: notificationApi.reducer,
         [productionApi.reducerPath]: productionApi.reducer,
+        [serviceApi.reducerPath]: serviceApi.reducer,
     },
     middleware: (getDefaultMiddleware)=>
-        getDefaultMiddleware().concat(userApi.middleware, petApi.middleware, wishlistApi.middleware, cartApi.middleware, notificationApi.middleware, productionApi.middleware),
+        getDefaultMiddleware().concat(userApi.middleware, petApi.middleware, wishlistApi.middleware, cartApi.middleware, notificationApi.middleware, productionApi.middleware, serviceApi.middleware),
 })
 
 setupListeners(store.dispatch);

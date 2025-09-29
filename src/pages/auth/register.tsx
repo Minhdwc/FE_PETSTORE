@@ -43,7 +43,7 @@ export default function Register() {
       });
 
       if (response.data.status === "Success") {
-        toast.success("Account created successfully");
+        toast.success("Tài khoản đã được tạo, vui lòng đăng nhập!");
         setTimeout(() => {
           navigate("/auth/login");
         }, 500);

@@ -2,12 +2,21 @@ import React, { useMemo, useState } from "react";
 import { useGetpetsQuery } from "@/store/services/pet.service";
 import type { IPet } from "@/types";
 import CustomPetsGrid from "@/components/CustomPetsGrid/CustomPetsGrid";
+import useCartWishlist from "@/hooks/useCartWishlist";
 import { Input, Select, Pagination, Drawer, Button, Radio, Slider } from "antd";
 import { FaSearch, FaFilter } from "react-icons/fa";
 
 const { Option } = Select;
 
 export default function PetPage() {
+  const {
+    isPetInCart,
+    handlePetAddToCart,
+    isAddingToCart,
+    isPetInWishlist,
+    toggleFavoritePet,
+  } = useCartWishlist();
+
   const [page, setPage] = useState(1);
   const [limit] = useState(12);
   const [search, setSearch] = useState("");
@@ -30,12 +39,12 @@ export default function PetPage() {
       gender: gender === undefined ? undefined : gender === "male",
       minPrice,
       maxPrice,
-      status,
+      status: "available",
     }),
     [page, limit, species, debounced, gender, minPrice, maxPrice, status]
   );
 
-  const { data, isFetching, isError } = useGetpetsQuery(query);
+  const { data, isFetching } = useGetpetsQuery(query);
   const pets: IPet[] = data?.data || [];
   const totalPages = data?.totalPages || 1;
 
@@ -71,7 +80,6 @@ export default function PetPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 space-y-6">
-      {/* Header */}
       <div className="flex flex-col items-center text-center space-y-2">
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
           Pet Store
@@ -81,8 +89,6 @@ export default function PetPage() {
           trạng thái.
         </p>
       </div>
-
-      {/* Top Filters */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-2xl shadow-sm p-4">
         <div className="flex items-center gap-2 w-full sm:w-1/3">
           <Input
@@ -114,22 +120,20 @@ export default function PetPage() {
         </Button>
       </div>
 
-      {/* Grid */}
       <CustomPetsGrid
         pets={shownPets}
         isLoading={isFetching}
-        isError={isError}
+        isPetInCart={isPetInCart}
+        isAddingToCart={isAddingToCart}
+        isFavorite={isPetInWishlist}
+        onAddToCart={handlePetAddToCart}
+        onToggleFavorite={toggleFavoritePet}
         showFavoriteButton={true}
         showCartButton={true}
-        onToggleFavorite={() => {}}
-        onAddToCart={() => {}}
         gridCols="4"
         gap="md"
-        emptyMessage="Không có thú cưng phù hợp"
-        errorMessage="Đã xảy ra lỗi. Thử lại"
       />
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center mt-8">
           <Pagination
@@ -142,7 +146,6 @@ export default function PetPage() {
         </div>
       )}
 
-      {/* Drawer for filters */}
       <Drawer
         title="Bộ lọc"
         open={drawerOpen}

@@ -4,6 +4,7 @@ import {
   useGetCartByUserQuery,
   useUpdateToCartMutation,
 } from "@/store/services/cart.service";
+import { ShoppingCartOutlined } from "@ant-design/icons";
 import { toast } from "react-hot-toast";
 
 export default function Cart() {
@@ -34,7 +35,16 @@ export default function Cart() {
 
   const cart = cartData?.data?.[0];
   const items = cart?.items || [];
-  console.log(cart);
+  if (!localStorage.getItem("accessToken")) {
+    return (
+      <div className="py-6 px-2 text-center">
+        <ShoppingCartOutlined className="text-4xl text-gray-300 mb-3" />
+        <div className="text-sm text-gray-500">
+          Vui lòng đăng nhập để xem danh sách yêu thích.
+        </div>
+      </div>
+    );
+  }
   if (!cart || items.length === 0) {
     return <div className="text-sm text-gray-500 p-3">Giỏ hàng trống.</div>;
   }

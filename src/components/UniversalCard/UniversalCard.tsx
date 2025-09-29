@@ -1,15 +1,19 @@
 import { Link } from "react-router-dom";
 import { FaShoppingCart, FaHeart } from "react-icons/fa";
-import type { IPet } from "@/types";
+import { IPet, IProduction } from "@/types";
 
-interface CustomPetCardProps {
-  pet: IPet;
+type UniversalItem = IPet | IProduction;
 
-  onAddToCart?: (pet: IPet) => void;
-  isPetInCart?: (petId: string) => boolean;
+interface UniversalCardProps {
+  item: UniversalItem;
+  itemType: "Pet" | "Production";
+
+  onAddToCart?: (item: UniversalItem) => void;
+  isItemInCart?: (itemId: string) => boolean;
   isAddingToCart?: boolean;
+  allowMultipleCart?: boolean;
 
-  onToggleFavorite?: (pet: IPet) => void;
+  onToggleFavorite?: (item: UniversalItem) => void;
   isFavorite?: boolean;
 
   showFavoriteButton?: boolean;
@@ -20,22 +24,59 @@ interface CustomPetCardProps {
   className?: string;
 }
 
-export default function CustomPetCard({
-  pet,
+export default function UniversalCard({
+  item,
+  itemType,
   onAddToCart,
-  isPetInCart,
+  isItemInCart,
   isAddingToCart = false,
+  allowMultipleCart = false,
   onToggleFavorite,
   isFavorite = false,
   showFavoriteButton = false,
   showCartButton = true,
   linkTo,
   className = "",
-}: CustomPetCardProps) {
-  const defaultLinkTo = `/pet/detail/${pet._id}`;
+}: UniversalCardProps) {
+  const defaultLinkTo =
+    itemType === "Pet"
+      ? `/pet/detail/${item._id}`
+      : `/production/detail/${item._id}`;
   const finalLinkTo = linkTo || defaultLinkTo;
 
-  const inCart = isPetInCart ? isPetInCart(pet._id) : false;
+  const inCart =
+    !allowMultipleCart && isItemInCart ? isItemInCart(item._id) : false;
+
+  const getDisplayInfo = () => {
+    if (itemType === "Pet") {
+      const pet = item as IPet;
+      return {
+        name: pet.name,
+        subtitle: pet.breed || pet.species,
+        price: pet.price,
+        image: pet.image_url,
+        status: pet.status,
+        statusText: pet.status === "available" ? "Còn bán" : "Đã bán",
+        statusColor:
+          pet.status === "available"
+            ? "bg-green-100 text-green-700 ring-green-200"
+            : "bg-gray-100 text-gray-700 ring-gray-200",
+      };
+    } else {
+      const product = item as IProduction;
+      return {
+        name: product.name,
+        subtitle: product.category,
+        price: product.price,
+        image: product.image_url,
+        status: null,
+        statusText: "",
+        statusColor: "",
+      };
+    }
+  };
+
+  const displayInfo = getDisplayInfo();
 
   return (
     <Link
@@ -50,16 +91,12 @@ export default function CustomPetCard({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                onToggleFavorite(pet);
+                onToggleFavorite(item);
               }}
               className={`flex h-9 w-9 items-center justify-center rounded-full bg-white/70 backdrop-blur ring-1 ring-blue-100 shadow-sm transition hover:scale-105 hover:bg-white ${
                 isFavorite ? "text-red-500" : "text-slate-700"
               }`}
-              title={
-                isFavorite
-                  ? "Xóa khỏi danh sách yêu thích"
-                  : "Thêm vào danh sách yêu thích"
-              }
+              title={isFavorite ? "Remove favorite" : "Add to favorites"}
             >
               <FaHeart size={16} />
             </button>
@@ -71,7 +108,7 @@ export default function CustomPetCard({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                onAddToCart(pet);
+                onAddToCart(item);
               }}
               disabled={inCart || isAddingToCart}
               className={`flex h-9 w-9 items-center justify-center rounded-full ring-1 ring-blue-100 shadow-sm transition ${
@@ -81,31 +118,33 @@ export default function CustomPetCard({
                   ? "bg-white/50 text-slate-400 cursor-wait opacity-50"
                   : "bg-white/70 text-slate-700 hover:scale-105 hover:bg-white"
               }`}
-              title={inCart ? "Already in cart" : "Add to cart"}
+              title={
+                inCart
+                  ? "Already in cart"
+                  : allowMultipleCart
+                  ? "Add to cart"
+                  : "Add to cart"
+              }
             >
               <FaShoppingCart size={16} />
             </button>
           )}
         </div>
 
-        {pet.status && (
+        {displayInfo.status && (
           <div className="absolute left-2 top-2 z-10">
             <span
-              className={`rounded-full px-2.5 py-1 text-xs font-medium shadow-sm ${
-                pet.status === "available"
-                  ? "bg-green-100 text-green-700 ring-1 ring-green-200"
-                  : "bg-gray-100 text-gray-700 ring-1 ring-gray-200"
-              }`}
+              className={`rounded-full px-2.5 py-1 text-xs font-medium shadow-sm ring-1 ${displayInfo.statusColor}`}
             >
-              {pet.status === "available" ? "Còn bán" : "Đã bán"}
+              {displayInfo.statusText}
             </span>
           </div>
         )}
 
-        {pet.image_url ? (
+        {displayInfo.image ? (
           <img
-            src={pet.image_url}
-            alt={pet.name || "pet"}
+            src={displayInfo.image}
+            alt={displayInfo.name || itemType.toLowerCase()}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
           />
@@ -115,10 +154,10 @@ export default function CustomPetCard({
           </div>
         )}
 
-        {typeof pet.price === "number" && (
+        {typeof displayInfo.price === "number" && (
           <div className="absolute bottom-2 left-2 z-10">
             <span className="rounded-full bg-white/80 backdrop-blur px-2.5 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-100 shadow-sm">
-              {pet.price.toLocaleString()} ₫
+              {displayInfo.price.toLocaleString("vi-VN")} ₫
             </span>
           </div>
         )}
@@ -126,10 +165,10 @@ export default function CustomPetCard({
 
       <div className="p-4">
         <div className="line-clamp-1 text-sm font-semibold text-slate-900">
-          {pet.name}
+          {displayInfo.name}
         </div>
         <div className="mt-1 text-xs text-slate-500 line-clamp-1">
-          {pet.breed || pet.species}
+          {displayInfo.subtitle}
         </div>
       </div>
     </Link>

@@ -15,6 +15,7 @@ const pagePet = React.lazy(()=>import("@/pages/user/PetPage/petPage"))
 const pageProduction = React.lazy(()=>import("@/pages/user/ProductionPage/productionPage"))
 const pageOrder = React.lazy(()=>import("@/pages/user/OrderPage/orderPage"))
 const detailPet = React.lazy(()=>import("@/pages/user/DetailPetPage/detailPetPage"))
+const appointment = React.lazy(()=>import("@/pages/user/Appointment/appointment"))
 // Note: detailProduction uses the same component as pageProduction
 const detailProduction = React.lazy(()=>import("@/pages/user/ProductionPage/productionPage"))
 //Page of admin
@@ -35,7 +36,7 @@ export const routes: Route[] = [
     {path: '/production/detail/:id', element: detailProduction, isShowHeader:true, isAdmin:false},
     {path: '/production', element: pageProduction, isShowHeader: true, isAdmin: false},
     {path: '/order', element: pageOrder, isShowHeader: true, isAdmin: false},
-
+    {path:'/appointment', element: appointment, isShowHeader:true, isAdmin:false},
     //Admin
     {path: '/admin/dashboard', element: dashboard, isShowHeader:false, isAdmin:true},
 

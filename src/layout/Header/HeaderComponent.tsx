@@ -8,7 +8,7 @@ import {
   BellOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-
+import { useState, useEffect } from "react";
 import Logo from "@/assets/logo.png";
 import CustomLogo from "@/components/Logo/Logo";
 import HeaderMenu from "./MenuHeader/Menu";
@@ -19,16 +19,35 @@ import Wishlist from "./DrawerHeader/WishlistHeader/wishlist";
 import Notification from "./DrawerHeader/NotificationHeader/Notification";
 import { useLazySearchPetsQuery } from "@/store/services/pet.service";
 import { useLazySearchProductionsQuery } from "@/store/services/production.service";
+import { useGetNotificationsByUserQuery } from "@/store/services/notification.service";
+import { useGetCartByUserQuery } from "@/store/services/cart.service";
+import { useGetWishlistByUserQuery } from "@/store/services/wishlist.service";
 
 const HeaderComponent: React.FC = () => {
   const token = localStorage.getItem("accessToken");
-  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
-  const [keyword, setKeyword] = React.useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [keyword, setKeyword] = useState("");
+  const [badgeCountNotifications, setBadgeCountNotifications] = useState(0);
+  const [badgeCountCart, setBadgeCountCart] = useState(0);
+  const [badgeCountWishlist, setBadgeCountWishlist] = useState(0);
   const [searchPets, { data: petResults }] = useLazySearchPetsQuery();
   const [searchProductions, { data: productResults }] =
     useLazySearchProductionsQuery();
 
-  React.useEffect(() => {
+  const { data: cartData } = useGetCartByUserQuery(
+    { page: 1, limit: 100 },
+    { skip: !token }
+  );
+  const { data: wishlistData } = useGetWishlistByUserQuery(
+    { page: 1, limit: 100 },
+    { skip: !token }
+  );
+  const { data: notificationData } = useGetNotificationsByUserQuery(
+    { page: 1, limit: 100 },
+    { skip: !token }
+  );
+
+  useEffect(() => {
     const handler = setTimeout(() => {
       const q = keyword.trim();
       if (q) {
@@ -38,6 +57,24 @@ const HeaderComponent: React.FC = () => {
     }, 350);
     return () => clearTimeout(handler);
   }, [keyword]);
+
+  useEffect(() => {
+    if (cartData?.data?.[0]?.items) {
+      setBadgeCountCart(cartData.data[0].items.length);
+    }
+  }, [cartData]);
+
+  useEffect(() => {
+    if (wishlistData?.data?.[0]?.items) {
+      setBadgeCountWishlist(wishlistData.data[0].items.length);
+    }
+  }, [wishlistData]);
+
+  useEffect(() => {
+    if (notificationData?.data) {
+      setBadgeCountNotifications(notificationData.data.length);
+    }
+  }, [notificationData]);
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -119,6 +156,7 @@ const HeaderComponent: React.FC = () => {
             />
           }
           titleDrawer="Thông báo"
+          badgeCount={badgeCountNotifications}
         />
         <button
           aria-label="Search"
@@ -139,6 +177,7 @@ const HeaderComponent: React.FC = () => {
             />
           }
           titleDrawer="Yêu thích"
+          badgeCount={badgeCountWishlist}
         />
         <CustomDrawer
           context={<Cart />}
@@ -149,7 +188,7 @@ const HeaderComponent: React.FC = () => {
             />
           }
           titleDrawer="Giỏ hàng"
-          badgeCount={10}
+          badgeCount={badgeCountCart}
         />
         <Dropdown
           menu={{ items: token ? menuUserItemsLogged : userMenuItemsNotLogged }}

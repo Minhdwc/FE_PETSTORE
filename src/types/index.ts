@@ -61,7 +61,18 @@ export interface IAppointment {
   _id: string;
   userId: string;
   categoryAppointment: string;
+  petInfo: {
+    name: string;
+    breed: string;
+    species: string;
+    gender: boolean;
+    age: number;
+    weight: number;
+  };
+  services: string[];
   time: Date;
+  notes: string;
+  price: number;
   status?: string;
   createdAt?: Date;
 }

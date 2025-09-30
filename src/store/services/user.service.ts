@@ -53,6 +53,9 @@ export const userApi = createApi({
             return [{type: 'Users' as const, id: 'LIST'}]
         }
     }),
+    getMyDetail: build.query<UserResponse>({
+      query: ()=>{}
+    })
   }),
 });
 

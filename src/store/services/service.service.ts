@@ -1,8 +1,6 @@
 import {createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import config from "@/config";
 import { IService } from "@/types";
-import { get } from "http";
-
 interface ServicePage {
     data: IService[];
     total: number;
@@ -60,7 +58,7 @@ export const serviceApi = createApi({
         }),
         getServiceDetail: build.query<ResponseService, string>({
             query: (id) => ({
-                url: `service/detail/u=${id}`,
+                url: `service/detail/${id}`,
                 method: "GET",
                 credentials: "include",
                 headers: {
@@ -69,7 +67,22 @@ export const serviceApi = createApi({
             }),
             providesTags: (result, error, id) => [{ type: "Services", id }]
         }),
+        getActiveServices: build.query<IService[], void>({
+            query: ()=>({
+                url: 'service/active',
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                },
+            }),
+            transformResponse: (res: any): IService[] => {
+                if (Array.isArray(res)) return res as IService[];
+                return (res?.data ?? []) as IService[];
+            },
+            providesTags: () => [{ type: "Services", id: "ACTIVE" }]
+        })
     }),
 })
 
-export const { useGetServicesQuery, useGetServiceDetailQuery } = serviceApi;
+export const { useGetServicesQuery, useGetServiceDetailQuery, useGetActiveServicesQuery } = serviceApi;

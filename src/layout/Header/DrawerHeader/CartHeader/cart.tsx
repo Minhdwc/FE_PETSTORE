@@ -1,5 +1,6 @@
 import CartHeaderItem from "./CartHeaderItem";
 import { Button } from "antd";
+import { useNavigate } from "react-router-dom";
 import {
   useGetCartByUserQuery,
   useUpdateToCartMutation,
@@ -8,6 +9,7 @@ import { ShoppingCartOutlined } from "@ant-design/icons";
 import { toast } from "react-hot-toast";
 
 export default function Cart() {
+  const navigate = useNavigate();
   const hasAccessToken = Boolean(localStorage.getItem("accessToken"));
   const [updateToCart, { isLoading: isUpdating }] = useUpdateToCartMutation();
   const {
@@ -90,6 +92,11 @@ export default function Cart() {
           block
           className="!bg-red-500 hover:!bg-red-600 rounded-lg"
           disabled={isUpdating}
+          onClick={() => {
+            navigate("/payment?mode=cart", {
+              state: { source: "cart" },
+            });
+          }}
         >
           {isUpdating ? "Đang cập nhật..." : "Thanh toán"}
         </Button>

@@ -57,7 +57,7 @@ export const cartApi = createApi({
           }
         };
       },
-      providesTags: results => {
+      providesTags: (results, error: any) => {
         if (results?.data && results.data.length > 0) {
           return [
             ...results.data.map(({ _id }) => ({ type: 'Carts' as const, id: _id })),

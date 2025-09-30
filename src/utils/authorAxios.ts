@@ -26,9 +26,11 @@ axiosInterceptor.interceptors.response.use(
     return response;
   },
   function (error: any) {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("accessToken")
-      localStorage.removeItem("refreshToken")
+    console.log(error);
+    if (error.response?.status === 498) {
+      // localStorage.removeItem("accessToken")
+      // localStorage.removeItem("refreshToken")
+      console.log("hết hạn");
     }
     return Promise.reject(error);
   }
